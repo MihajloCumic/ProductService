@@ -3,7 +3,6 @@ package com.example.product_service.entities;
 import com.example.product_service.common.ProductType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Product {
@@ -12,11 +11,10 @@ public class Product {
     private Long id;
 
     @Column(nullable = false)
-    @NotNull
     @NotBlank
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @NotNull
     private ProductType type;
 }
