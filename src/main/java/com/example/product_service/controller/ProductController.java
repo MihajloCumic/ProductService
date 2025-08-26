@@ -1,4 +1,4 @@
-package com.example.product_service.controllers;
+package com.example.product_service.controller;
 
 import com.example.product_service.common.ProductType;
 import com.example.product_service.dto.product.ProductDetails;

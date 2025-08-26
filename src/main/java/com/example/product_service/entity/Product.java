@@ -1,4 +1,4 @@
-package com.example.product_service.entities;
+package com.example.product_service.entity;
 
 import com.example.product_service.common.ProductType;
 import jakarta.persistence.*;
@@ -17,4 +17,13 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductType type;
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if(obj instanceof Product other){
+            return id != null && id.equals(other.id);
+        }
+        return false;
+    }
 }
