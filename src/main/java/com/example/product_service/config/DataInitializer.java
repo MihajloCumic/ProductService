@@ -1,6 +1,7 @@
 package com.example.product_service.config;
 
 import com.example.product_service.common.ProductType;
+import com.example.product_service.entity.Product;
 import com.example.product_service.repository.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
@@ -24,13 +25,18 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        List<Product> products = new ArrayList<>();
         for(ProductType type: ProductType.values()){
-            List<String> powerTools = loadProductNames(type);
-            for(String name: powerTools){
-                System.out.println(name);
+            List<String> productNames = loadProductNames(type);
+            for(String name: productNames){
+                Product product = new Product();
+                product.setName(name);
+                product.setType(type);
+
+                products.add(product);
             }
         }
-
+        productRepository.saveAll(products);
     }
 
     private List<String> loadProductNames(ProductType type){
