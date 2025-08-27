@@ -1,22 +1,21 @@
 package com.example.product_service.mapper;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface Mapper <E, D>{
-    E toEntity(D dto);
-    D toDto(E entity);
+public interface Mapper <Entity, In, Out>{
+    Entity toEntity(In dto);
+    Out toDto(Entity entity);
 
-    default Set<E> toEntityList(Set<D> dtos){
+    default List<Entity> toEntityList(List<In> dtos){
         return dtos.stream()
                 .map(this::toEntity)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
-    default Set<D> toDtoList(Set<E> entities){
+    default List<Out> toDtoList(List<Entity> entities){
         return entities.stream()
                 .map(this::toDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
 }
