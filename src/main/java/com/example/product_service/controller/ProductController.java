@@ -29,7 +29,7 @@ public class ProductController {
                 2L,
                 new ProductDetails(
                         "product2",
-                        ProductType.BATTERY
+                        ProductType.WASHING_MACHINE
                 )
         );
         products.add(p1);

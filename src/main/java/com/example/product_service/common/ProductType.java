@@ -5,7 +5,4 @@ public enum ProductType {
     MEASURING_TOOL,
     WASHING_MACHINE,
     DISHWASHER,
-    REFRIGERATOR,
-    CAR_PART,
-    BATTERY
 }
