@@ -1,5 +1,8 @@
 package com.example.product_service.service;
 
-public interface AuthService {
+import com.example.product_service.dto.user.UserOutDto;
+import com.example.product_service.dto.user.auth.RegistrationDto;
 
+public interface AuthService {
+    UserOutDto register(RegistrationDto registrationDto);
 }
