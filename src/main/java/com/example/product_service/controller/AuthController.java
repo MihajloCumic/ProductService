@@ -6,9 +6,11 @@ import com.example.product_service.dto.user.auth.LoginDto;
 import com.example.product_service.dto.user.auth.RegistrationDto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/auth")
+@RestController()
+@RequestMapping("/auth")
 public class AuthController {
 
     @PostMapping("/register")

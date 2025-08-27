@@ -1,6 +1,5 @@
 package com.example.product_service.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
+@Table(name = "app_users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +21,7 @@ public class User {
 
     @Column(nullable = false, length = 128)
     private String password;
+
+    @Column(nullable = false)
+    private Boolean active;
 }
