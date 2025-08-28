@@ -2,8 +2,9 @@ package com.example.product_service.config;
 
 import com.example.product_service.common.ProductType;
 import com.example.product_service.common.Role;
-import com.example.product_service.entity.Product;
-import com.example.product_service.entity.User;
+import com.example.product_service.entity.*;
+import com.example.product_service.repository.CartItemRepository;
+import com.example.product_service.repository.CartRepository;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -22,13 +23,19 @@ public class DataInitializer implements CommandLineRunner {
     private static final String SEED_DIR = "seed/";
     private static final String FILE_EXT = ".txt";
     private final ProductRepository productRepository;
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(ProductRepository productRepository,
+                           CartRepository cartRepository,
+                           CartItemRepository cartItemRepository,
                            UserRepository userRepository,
                            PasswordEncoder passwordEncoder){
         this.productRepository = productRepository;
+        this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -64,6 +71,22 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
         productRepository.saveAll(products);
+        Cart cart = new Cart();
+        List<CartItem> items = new ArrayList<>();
+        cartRepository.save(cart);
+        for(Product product: products){
+            CartItemId id = new CartItemId();
+            id.setCartId(cart.getId());
+            id.setProductId(product.getId());
+
+            CartItem item = new CartItem();
+            item.setId(id);
+            item.setCart(cart);
+            item.setProduct(product);
+            item.setQuantity(0);
+            items.add((item));
+        }
+        cartItemRepository.saveAll(items);
     }
 
     private List<String> loadProductNames(ProductType type){

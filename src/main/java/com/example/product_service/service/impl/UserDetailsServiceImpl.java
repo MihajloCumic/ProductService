@@ -20,6 +20,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetailsServiceImpl(UserRepository userRepository){
         this.userRepository = userRepository;
     }
+    public User getUserByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+    }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(
