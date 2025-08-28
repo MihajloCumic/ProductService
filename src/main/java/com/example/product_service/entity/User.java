@@ -4,6 +4,7 @@ import com.example.product_service.common.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyToOne;
 
 @Data
 @NoArgsConstructor
@@ -29,4 +30,8 @@ public class User {
 
     @Column(nullable = false)
     private Boolean active;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 }

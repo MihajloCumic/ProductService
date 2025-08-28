@@ -1,12 +1,13 @@
 package com.example.product_service.entity;
 
 import jakarta.persistence.Embeddable;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
 public class CartItemId implements Serializable {

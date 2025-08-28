@@ -3,10 +3,11 @@ package com.example.product_service.entity;
 import com.example.product_service.common.ProductType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Product {

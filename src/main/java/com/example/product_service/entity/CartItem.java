@@ -1,10 +1,11 @@
 package com.example.product_service.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class CartItem {

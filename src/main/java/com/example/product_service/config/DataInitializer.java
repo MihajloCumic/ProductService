@@ -7,6 +7,7 @@ import com.example.product_service.repository.CartItemRepository;
 import com.example.product_service.repository.CartRepository;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.repository.UserRepository;
+import org.hibernate.Hibernate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,8 +72,8 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
         productRepository.saveAll(products);
+
         Cart cart = new Cart();
-        List<CartItem> items = new ArrayList<>();
         cartRepository.save(cart);
         for(Product product: products){
             CartItemId id = new CartItemId();
@@ -81,12 +82,14 @@ public class DataInitializer implements CommandLineRunner {
 
             CartItem item = new CartItem();
             item.setId(id);
-            item.setCart(cart);
             item.setProduct(product);
-            item.setQuantity(0);
-            items.add((item));
+            item.setCart(cart);
+            item.setQuantity(1);
+
+            cart.getItems().add(item);
         }
-        cartItemRepository.saveAll(items);
+
+        cartRepository.save(cart);
     }
 
     private List<String> loadProductNames(ProductType type){
