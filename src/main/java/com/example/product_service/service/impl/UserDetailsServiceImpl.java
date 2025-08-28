@@ -3,8 +3,11 @@ package com.example.product_service.service.impl;
 import com.example.product_service.common.Role;
 import com.example.product_service.entity.User;
 import com.example.product_service.repository.UserRepository;
+import com.example.product_service.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,17 +17,13 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
 
     public UserDetailsServiceImpl(UserRepository userRepository){
         this.userRepository = userRepository;
     }
-    public User getUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User not found")
-        );
-    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(
@@ -41,5 +40,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Collection<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(role.name()));
         return authorities;
+    }
+
+    @Override
+    public User loadCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("User not found.")
+        );
     }
 }

@@ -3,7 +3,6 @@ package com.example.product_service.config;
 import com.example.product_service.common.ProductType;
 import com.example.product_service.common.Role;
 import com.example.product_service.entity.*;
-import com.example.product_service.repository.CartItemRepository;
 import com.example.product_service.repository.CartRepository;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.repository.UserRepository;
