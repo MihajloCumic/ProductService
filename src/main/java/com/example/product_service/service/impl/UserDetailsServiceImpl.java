@@ -2,6 +2,7 @@ package com.example.product_service.service.impl;
 
 import com.example.product_service.common.Role;
 import com.example.product_service.entity.User;
+import com.example.product_service.exceptions.impl.ResourceNotFound;
 import com.example.product_service.repository.UserRepository;
 import com.example.product_service.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -27,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new ResourceNotFound("user:email")
         );
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
@@ -47,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User not found.")
+                () -> new ResourceNotFound("user:email")
         );
     }
 

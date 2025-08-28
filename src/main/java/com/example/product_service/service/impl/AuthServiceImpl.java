@@ -2,12 +2,12 @@ package com.example.product_service.service.impl;
 
 import com.example.product_service.common.JwtUtil;
 import com.example.product_service.common.Role;
-import com.example.product_service.dto.user.UserOutDto;
 import com.example.product_service.dto.user.auth.AuthResponseDto;
 import com.example.product_service.dto.user.auth.LoginDto;
 import com.example.product_service.dto.user.auth.RegistrationDto;
 import com.example.product_service.entity.Cart;
 import com.example.product_service.entity.User;
+import com.example.product_service.exceptions.impl.ResourceAlreadyExists;
 import com.example.product_service.mapper.Mapper;
 import com.example.product_service.repository.UserRepository;
 import com.example.product_service.service.AuthService;
@@ -15,11 +15,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -45,10 +42,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponseDto register(RegistrationDto registrationDto) {
         if(userRepository.existsByEmail(registrationDto.details().email())){
-            throw new RuntimeException("Email already exists.");
+            throw new ResourceAlreadyExists("user:email");
         }
         if(userRepository.existsByUsername(registrationDto.details().username())){
-            throw new RuntimeException("Username already exists.");
+            throw new ResourceAlreadyExists("user:username");
         }
 
         User user = mapper.toEntity(registrationDto);

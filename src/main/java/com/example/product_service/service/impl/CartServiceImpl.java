@@ -3,8 +3,9 @@ package com.example.product_service.service.impl;
 import com.example.product_service.dto.cart.ItemInDto;
 import com.example.product_service.dto.cart.CartOutDto;
 import com.example.product_service.entity.*;
+import com.example.product_service.exceptions.impl.ResourceAlreadyExists;
+import com.example.product_service.exceptions.impl.ResourceNotFound;
 import com.example.product_service.mapper.Mapper;
-import com.example.product_service.repository.CartRepository;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.service.CartService;
 import com.example.product_service.service.UserService;
@@ -16,8 +17,7 @@ public class CartServiceImpl implements CartService {
     private final UserService userService;
     private final Mapper<Cart, Void, CartOutDto> cartMapper;
 
-    public CartServiceImpl(CartRepository cartRepository,
-                           ProductRepository productRepository,
+    public CartServiceImpl(ProductRepository productRepository,
                            UserService userService,
                            Mapper<Cart, Void, CartOutDto> cartMapper){
         this.productRepository = productRepository;
@@ -35,7 +35,7 @@ public class CartServiceImpl implements CartService {
         User user = userService.loadCurrentUser();
 
         Product product = productRepository.findById(itemDto.productId()).orElseThrow(
-                () -> new RuntimeException("Product not found.")
+                () -> new ResourceNotFound("product:id")
         );
 
         Cart cart = user.getCart();
@@ -54,7 +54,7 @@ public class CartServiceImpl implements CartService {
             userService.saveUser(user);
             return cartMapper.toDto(cart);
         }
-        throw new RuntimeException("Product is already in the cart.");
+        throw new ResourceAlreadyExists("cart:product");
     }
 
     @Override
@@ -77,9 +77,10 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = findCartItem(user.getCart(), itemInDto.productId());
 
         if(user.getCart().getItems().remove(cartItem)){
+            userService.saveUser(user);
             return cartMapper.toDto(cart);
         }
-        throw new RuntimeException("Item for product does not exist.");
+        throw new ResourceNotFound("item:product");
     }
 
     private CartItem findCartItem(Cart cart, long productId){
@@ -87,7 +88,7 @@ public class CartServiceImpl implements CartService {
         return cart.getItems().stream()
                 .filter(item -> item.getId().getProductId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Product does not exist in cart."));
+                .orElseThrow(() -> new ResourceNotFound("cart:product"));
     }
 
 }
