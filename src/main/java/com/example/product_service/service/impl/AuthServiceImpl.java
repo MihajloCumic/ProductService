@@ -6,6 +6,7 @@ import com.example.product_service.dto.user.UserOutDto;
 import com.example.product_service.dto.user.auth.AuthResponseDto;
 import com.example.product_service.dto.user.auth.LoginDto;
 import com.example.product_service.dto.user.auth.RegistrationDto;
+import com.example.product_service.entity.Cart;
 import com.example.product_service.entity.User;
 import com.example.product_service.mapper.Mapper;
 import com.example.product_service.repository.UserRepository;
@@ -52,6 +53,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = mapper.toEntity(registrationDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCart(new Cart());
         userRepository.save(user);
 
         return new AuthResponseDto(jwtUtil.generateToken(

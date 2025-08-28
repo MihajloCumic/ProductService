@@ -20,7 +20,7 @@ public class ProductController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<List<ProductOutDto>> getAllProducts(){
         List<ProductOutDto> products = productService.getAll();
         return ResponseEntity.ok(products);
@@ -28,6 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<ProductOutDto> getProductById(@PathVariable Long id){
         ProductOutDto product = productService.getById(id);
         return ResponseEntity.ok(product);

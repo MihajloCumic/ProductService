@@ -1,9 +1,7 @@
 package com.example.product_service.service.impl;
 
-import com.example.product_service.dto.cart.AddProductToCartDto;
+import com.example.product_service.dto.cart.ItemInDto;
 import com.example.product_service.dto.cart.CartOutDto;
-import com.example.product_service.dto.product.ProductInDto;
-import com.example.product_service.dto.product.ProductOutDto;
 import com.example.product_service.entity.*;
 import com.example.product_service.mapper.Mapper;
 import com.example.product_service.repository.CartRepository;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CartServiceImpl implements CartService {
-    private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final UserService userService;
     private final Mapper<Cart, Void, CartOutDto> cartMapper;
@@ -23,7 +20,6 @@ public class CartServiceImpl implements CartService {
                            ProductRepository productRepository,
                            UserService userService,
                            Mapper<Cart, Void, CartOutDto> cartMapper){
-        this.cartRepository = cartRepository;
         this.productRepository = productRepository;
         this.userService = userService;
         this.cartMapper = cartMapper;
@@ -35,10 +31,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartOutDto addProductToCart(AddProductToCartDto productId) {
+    public CartOutDto addItemToCart(ItemInDto itemDto) {
         User user = userService.loadCurrentUser();
 
-        Product product = productRepository.findById(productId.id()).orElseThrow(
+        Product product = productRepository.findById(itemDto.productId()).orElseThrow(
                 () -> new RuntimeException("Product not found.")
         );
 
@@ -52,12 +48,46 @@ public class CartServiceImpl implements CartService {
         cartItem.setId(id);
         cartItem.setCart(cart);
         cartItem.setProduct(product);
+        cartItem.setQuantity(itemDto.quantity());
 
         if(user.getCart().getItems().add(cartItem)){
             userService.saveUser(user);
             return cartMapper.toDto(cart);
         }
         throw new RuntimeException("Product is already in the cart.");
+    }
+
+    @Override
+    public CartOutDto updateItemsQuantity(ItemInDto itemDto) {
+        User user = userService.loadCurrentUser();
+        Cart cart = user.getCart();
+
+        CartItem cartItem = findCartItem(cart, itemDto.productId());
+        cartItem.setQuantity(itemDto.quantity());
+
+        userService.saveUser(user);
+        return cartMapper.toDto(cart);
+    }
+
+    @Override
+    public CartOutDto deleteItem(ItemInDto itemInDto) {
+        User user = userService.loadCurrentUser();
+        Cart cart = user.getCart();
+
+        CartItem cartItem = findCartItem(user.getCart(), itemInDto.productId());
+
+        if(user.getCart().getItems().remove(cartItem)){
+            return cartMapper.toDto(cart);
+        }
+        throw new RuntimeException("Item for product does not exist.");
+    }
+
+    private CartItem findCartItem(Cart cart, long productId){
+
+        return cart.getItems().stream()
+                .filter(item -> item.getId().getProductId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Product does not exist in cart."));
     }
 
 }
