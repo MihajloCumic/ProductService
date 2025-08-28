@@ -7,8 +7,10 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class CartItem {
+    @EqualsAndHashCode.Include
     @EmbeddedId
     private CartItemId id;
 
@@ -24,6 +26,5 @@ public class CartItem {
 
     @Column(nullable = false)
     private Integer quantity;
-
 }
 

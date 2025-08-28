@@ -50,4 +50,9 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
                 () -> new RuntimeException("User not found.")
         );
     }
+
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }

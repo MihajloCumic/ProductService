@@ -4,4 +4,5 @@ import com.example.product_service.entity.User;
 
 public interface UserService {
     User loadCurrentUser();
+    User saveUser(User user);
 }
