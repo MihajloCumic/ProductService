@@ -7,7 +7,7 @@ import com.example.product_service.repository.CartItemRepository;
 import com.example.product_service.repository.CartRepository;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.repository.UserRepository;
-import org.hibernate.Hibernate;
+import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,29 +25,29 @@ public class DataInitializer implements CommandLineRunner {
     private static final String FILE_EXT = ".txt";
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(ProductRepository productRepository,
                            CartRepository cartRepository,
-                           CartItemRepository cartItemRepository,
                            UserRepository userRepository,
                            PasswordEncoder passwordEncoder){
         this.productRepository = productRepository;
         this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
+    @Transactional
     public void run(String... args) {
-        creatAdmin();
-        createProducts();
+        User admin = creatAdmin();
+        createProducts(admin);
     }
 
-    private void creatAdmin(){
+    private User creatAdmin(){
+        Cart cart = new Cart();
+        cartRepository.save(cart);
         User user = new User();
 
         user.setRole(Role.ADMIN);
@@ -55,11 +55,12 @@ public class DataInitializer implements CommandLineRunner {
         user.setUsername("admin");
         user.setPassword(passwordEncoder.encode("123456789"));
         user.setActive(true);
+        user.setCart(cart);
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    private void createProducts(){
+    private void createProducts(User admin){
         List<Product> products = new ArrayList<>();
         for(ProductType type: ProductType.values()){
             List<String> productNames = loadProductNames(type);
@@ -73,8 +74,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         productRepository.saveAll(products);
 
-        Cart cart = new Cart();
-        cartRepository.save(cart);
+        Cart cart = admin.getCart();
         for(Product product: products){
             CartItemId id = new CartItemId();
             id.setCartId(cart.getId());
@@ -89,7 +89,7 @@ public class DataInitializer implements CommandLineRunner {
             cart.getItems().add(item);
         }
 
-        cartRepository.save(cart);
+        userRepository.save(admin);
     }
 
     private List<String> loadProductNames(ProductType type){

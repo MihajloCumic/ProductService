@@ -4,7 +4,6 @@ import com.example.product_service.common.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.LazyToOne;
 
 @Data
 @NoArgsConstructor
