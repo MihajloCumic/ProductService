@@ -1,10 +1,14 @@
 package com.example.product_service.config;
 
 import com.example.product_service.common.ProductType;
+import com.example.product_service.common.Role;
 import com.example.product_service.entity.Product;
+import com.example.product_service.entity.User;
 import com.example.product_service.repository.ProductRepository;
+import com.example.product_service.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -18,13 +22,36 @@ public class DataInitializer implements CommandLineRunner {
     private static final String SEED_DIR = "seed/";
     private static final String FILE_EXT = ".txt";
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(ProductRepository productRepository){
+    public DataInitializer(ProductRepository productRepository,
+                           UserRepository userRepository,
+                           PasswordEncoder passwordEncoder){
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
+        creatAdmin();
+        createProducts();
+    }
+
+    private void creatAdmin(){
+        User user = new User();
+
+        user.setRole(Role.ADMIN);
+        user.setEmail("admin@gmail.com");
+        user.setUsername("admin");
+        user.setPassword(passwordEncoder.encode("123456789"));
+        user.setActive(true);
+
+        userRepository.save(user);
+    }
+
+    private void createProducts(){
         List<Product> products = new ArrayList<>();
         for(ProductType type: ProductType.values()){
             List<String> productNames = loadProductNames(type);
